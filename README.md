@@ -41,15 +41,22 @@ A premium, responsive Django implementation based on the supplied ISTMS project 
 
 ## Deploy publicly on Render
 
-The `render.yaml` Blueprint provisions a Django web service, PostgreSQL database,
-and persistent storage for ticket attachments. In Render, create a new Blueprint
-from this project's repository and review the plan and cost before applying it.
-After deployment, Render provides an HTTPS URL that can be opened from devices
-anywhere with an internet connection.
+The `render.yaml` Blueprint uses Render's free web service and PostgreSQL plans.
+Create a Blueprint from this repository in Render; after deployment, Render
+provides an HTTPS URL that can be opened from devices anywhere with internet
+access.
 
-Once deployment completes, run `python manage.py createsuperuser` in the web
-service's shell to create the first administrator. Do not run `seed_demo` on a
-public deployment; its demo accounts use a shared, predictable password.
+Free service limitations apply: the web service spins down after 15 minutes
+without traffic and can take about a minute to wake up. Its filesystem is
+ephemeral, so ticket attachments are temporary and can be lost when the service
+restarts or spins down. The free PostgreSQL database has 1 GB of storage and
+expires 30 days after creation; after its grace period, Render deletes it unless
+upgraded. This configuration is for testing, not production. Check Render's
+current free plan terms before deployment.
+
+Once deployed, run `python manage.py createsuperuser` in the web service's shell
+to create the first administrator. Do not run `seed_demo` on a public deployment;
+its demo accounts use a shared, predictable password.
 
 ## Demo accounts
 - Employee: `employee` / `password123`
@@ -59,6 +66,7 @@ public deployment; its demo accounts use a shared, predictable password.
 
 ## Production notes
 The Render configuration supplies an environment-generated SECRET_KEY, disables
-DEBUG, restricts hosts, uses PostgreSQL, enables HTTPS security settings, and
-stores uploaded attachments on a persistent disk. Configure email delivery and
-review account registration and operational security before production use.
+DEBUG, restricts hosts, uses PostgreSQL, and enables HTTPS security settings.
+Configure email delivery and review account registration and operational
+security before production use. Upgrade the web service and database and add
+persistent file storage before using this system for real support tickets.

@@ -2,11 +2,10 @@ services:
   - type: web
     name: istms
     runtime: python
-    plan: starter
+    plan: free
     region: singapore
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input
-    preDeployCommand: python manage.py migrate
-    startCommand: gunicorn istms_project.wsgi:application
+    startCommand: python manage.py migrate && gunicorn istms_project.wsgi:application
     envVars:
       - key: DJANGO_DEBUG
         value: "false"
@@ -21,15 +20,11 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         value: https://*.onrender.com
       - key: MEDIA_ROOT
-        value: /var/data/media
-    disk:
-      name: istms-media
-      mountPath: /var/data
-      sizeGB: 1
+        value: /tmp/istms-media
 
 databases:
   - name: istms-db
     databaseName: istms
     user: istms
-    plan: basic-256mb
+    plan: free
     region: singapore
