@@ -1,0 +1,64 @@
+{% extends 'tickets/base.html' %}
+{% block title %}{{ form_title|default:"Add User" }}{% endblock %}
+{% block page_label %}User Management{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">ACCESS CONTROL</span>
+    <h1>{{ form_title|default:"Add User" }}</h1>
+    <p>{{ form_description|default:"Create a new user account and assign their role." }}</p>
+  </div>
+  <a class="btn ghost" href="{% url 'user_management' %}">← Back</a>
+</div>
+
+<div class="form-card user-form-card">
+  <form method="post" class="form-grid user-form-grid">
+    {% csrf_token %}
+    <div class="form-section span-2">
+      <h2>Account access</h2>
+      <p>{% if is_edit %}Update the user's sign-in details and permission level.{% else %}Set the user's sign-in details and permission level.{% endif %}</p>
+    </div>
+    <div>
+      <label>Username<input type="text" name="username" class="form-control" autocomplete="off" value="{{ form_data.username|default:target_user.username }}" required></label>
+    </div>
+    <div>
+      <label>Email<input type="email" name="email" class="form-control" autocomplete="email" value="{{ form_data.email|default:target_user.email }}" required></label>
+    </div>
+    <div>
+      <label>Password<input type="password" name="password" class="form-control" autocomplete="new-password" minlength="8" {% if not is_edit %}required{% endif %}></label>
+      <span class="hint">{% if is_edit %}Leave blank to keep the current password.{% else %}Use at least 8 characters.{% endif %}</span>
+    </div>
+    <div>
+      <label>Role
+        <select name="role" class="form-control">
+          {% for value, label in role_choices %}
+            <option value="{{ value }}" {% if selected_role == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-section span-2">
+      <h2>Profile details</h2>
+      <p>{% if is_edit %}Update the user's name and organization information.{% else %}Add the user's name and organization information.{% endif %}</p>
+    </div>
+    <div>
+      <label>First Name<input type="text" name="first_name" class="form-control" autocomplete="given-name" value="{{ form_data.first_name|default:target_user.first_name }}"></label>
+    </div>
+    <div>
+      <label>Last Name<input type="text" name="last_name" class="form-control" autocomplete="family-name" value="{{ form_data.last_name|default:target_user.last_name }}"></label>
+    </div>
+    <div>
+      <label>Department<input type="text" name="department" class="form-control" placeholder="Operations" value="{{ form_data.department|default:user_profile.department }}"></label>
+    </div>
+    <div>
+      <label>Employee ID<input type="text" name="employee_id" class="form-control" placeholder="EMP-001" value="{{ form_data.employee_id|default:user_profile.employee_id }}"></label>
+    </div>
+
+    <div class="span-2 form-actions">
+      <a class="btn ghost" href="{% url 'user_management' %}">Cancel</a>
+      <button class="btn primary" type="submit">{% if is_edit %}Save changes{% else %}Create user{% endif %}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
